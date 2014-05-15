@@ -1,5 +1,6 @@
 import os
 import sqlite3
+import time
 from flask import Flask,request,session,g,redirect,url_for,abort,render_template,flash
 
 app = Flask(__name__)
@@ -46,6 +47,24 @@ def close_db(xx):
     if hasattr(g,'sqlite_db'):
         g.sqlite_db.close();
 
+@app.route('/')
+def home():
+    """@todo: Docstring for home.
+
+    :arg1: @todo
+    :returns: @todo
+
+    """
+    return render_template('home.html')
+
+@app.route('/<int:id>.html')
+def post(id):
+    """@todo: Docstring for post.
+    :returns: @todo
+
+    """
+    return render_template('post.html')
+
 @app.route('/admin/posts')
 def list_posts():
     """@todo: Docstring for list_posts.
@@ -55,15 +74,21 @@ def list_posts():
     db = get_db()
     return render_template('admin/post/list.html')
 
-@app.route('/admin/post/edit/<int:post_id>')
-def post_edit(post_id):
-    """@todo: Docstring for post_edit.
-
-    :arg1: @todo
-    :returns: @todo
-
-    """
-    return render_template('admin/post/edit.html')
+@app.route('/admin/post/edit',methods=["GET","POST"])
+def post_edit(post_id=None):
+    db = get_db()
+    cursor = db.cursor()
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+        cursor.execute('insert into posts values(null,?,?,?,?)',(title,content,time.time(),time.time()))
+        db.commit()
+        return redirect(url_for('post_edit',id=cursor.lastrowid))
+    else:
+        id = request.args['id']
+        cursor.execute('select * from posts where id=%s' % (id))
+        post = cursor.fetchone()
+        return render_template('admin/post/edit.html',post=post)
 
 
 if __name__ == '__main__':
