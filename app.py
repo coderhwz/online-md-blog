@@ -46,15 +46,6 @@ def close_db(xx):
     if hasattr(g,'sqlite_db'):
         g.sqlite_db.close();
 
-@app.route('/')
-def hello():
-    """@todo: Docstring for hello.
-    :: @todo
-    :returns: @todo
-
-    """
-    return 'hello world'
-
 @app.route('/admin/posts')
 def list_posts():
     """@todo: Docstring for list_posts.
@@ -62,7 +53,18 @@ def list_posts():
 
     """
     db = get_db()
-    return render_template('admin/list_posts.html')
+    return render_template('admin/post/list.html')
+
+@app.route('/admin/post/edit/<int:post_id>')
+def post_edit(post_id):
+    """@todo: Docstring for post_edit.
+
+    :arg1: @todo
+    :returns: @todo
+
+    """
+    return render_template('admin/post/edit.html')
+
 
 if __name__ == '__main__':
     app.debug = True

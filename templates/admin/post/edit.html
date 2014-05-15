@@ -1,0 +1,9 @@
+{% extends "admin/layout.html" %}
+{% block body %}
+<form action="{{ url_for("post_edit") }}" method="post" accept-charset="utf-8">
+    <input type="text" value="" name="title" placeholder="标题" id="title"/>
+    <textarea name="content" id="contenet"></textarea>
+
+    <p><input type="submit" value="Continue →"></p>
+</form>
+{% endblock %}
