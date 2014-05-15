@@ -1,4 +1,11 @@
 {% extends "layout.html" %}
+
+{% block head %}
+
+<link rel="stylesheet" href="{{ url_for('static',filename='css/pygments/default.css') }}" type="text/css" media="screen" title="no title" charset="utf-8">
+{% endblock%}
+
 {% block body %}
-post
+<h1>{{ post.title }}{{ post.keyword }}{{ post.desc }}</h1>
+{{ post.content | safe }}
 {% endblock %}
