@@ -2,7 +2,7 @@ import os
 import sqlite3
 import time
 import markdown
-from flask import Flask,request,session,g,redirect,url_for,abort,render_template,flash
+from flask import Flask,request,session,g,redirect,url_for,abort,render_template,flash,abort
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -48,6 +48,15 @@ def close_db(xx):
     if hasattr(g,'sqlite_db'):
         g.sqlite_db.close();
 
+@app.errorhandler(404)
+def page_not_found(e):
+    """@todo: Docstring for page_not_found.
+
+    :arg1: @todo
+    :returns: @todo
+
+    """
+    return render_template('404.html'),404
 @app.route('/')
 def home():
     """@todo: Docstring for home.
@@ -68,6 +77,8 @@ def post(slug):
     cursor = db.cursor()
     cursor.execute('select * from posts where id=? OR slug=?',(slug,slug))
     post = cursor.fetchone()
+    if not post:
+        abort(404)
     return render_template('post.html',post=post)
 
 @app.route('/admin/posts')
@@ -102,7 +113,7 @@ def post_edit():
             cursor.execute('select * from posts where id=%s' % (id))
             post = cursor.fetchone()
             if not post:
-                return 'post not avaliable'
+                abort(404)
             else:
                 cursor.execute('update posts set title=?,markdown=?,content=?,'+
                         'slug=?,keyword=?,desc=?,update_at=? where id=?',
