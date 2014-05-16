@@ -6,7 +6,6 @@
 {% endblock %}
 {% block body %}
 <form action="{{ url_for("post_edit") }}" method="POST" accept-charset="utf-8">
-    <input type="text" value="{{ post.title }}" name="title" placeholder="标题" id="title"/>
     <textarea name="markdown" id="editor">{{ post.markdown }}</textarea>
     <input type="hidden" name="id" value="{{ post.id }}" />
     

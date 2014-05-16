@@ -90,11 +90,12 @@ def post_edit():
     db = get_db()
     cursor = db.cursor()
     if request.method == 'POST':
-        title = request.form.get('title')
         mdtext = request.form.get('markdown','')
         md = markdown.Markdown(extensions=['extra','codehilite','admonition','meta'])
         content = md.convert(mdtext)
+        title = md.Meta.get('title',[""])[0]
         keyword = md.Meta.get('keyword',[""])[0]
+        # return keyword
         desc = md.Meta.get('description',[""])[0]
         if id:
             cursor.execute('select * from posts where id=%s' % (id))
@@ -111,7 +112,7 @@ def post_edit():
         else:
 
             cursor.execute('insert into posts values(null,?,?,?,?,?,?,?)',(title,
-                markdown,content,str(keyword),desc,time.time(),time.time()))
+                mdtext,content,keyword,desc,time.time(),time.time()))
             db.commit()
             return redirect(url_for('post_edit',id=cursor.lastrowid))
     else:
