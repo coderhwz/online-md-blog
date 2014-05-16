@@ -4,6 +4,7 @@ create table posts (
     title text not null,
     markdown text not null,
     content text not null,
+    slug text ,
     keyword text ,
     desc text,
     create_at integer not null,

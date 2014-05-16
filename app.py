@@ -58,15 +58,15 @@ def home():
     """
     return render_template('home.html')
 
-@app.route('/<id>')
-def post(id):
+@app.route('/<slug>.html')
+def post(slug):
     """@todo: Docstring for post.
     :returns: @todo
 
     """
     db = get_db()
     cursor = db.cursor()
-    cursor.execute('select * from posts where id=?',(id))
+    cursor.execute('select * from posts where id=? OR slug=?',(slug,slug))
     post = cursor.fetchone()
     return render_template('post.html',post=post)
 
@@ -95,6 +95,7 @@ def post_edit():
         content = md.convert(mdtext)
         title = md.Meta.get('title',[""])[0]
         keyword = md.Meta.get('keyword',[""])[0]
+        slug = md.Meta.get('slug',[""])[0].strip()
         # return keyword
         desc = md.Meta.get('description',[""])[0]
         if id:
@@ -104,15 +105,15 @@ def post_edit():
                 return 'post not avaliable'
             else:
                 cursor.execute('update posts set title=?,markdown=?,content=?,'+
-                        'keyword=?,desc=?,update_at=? where id=?',
-                        (title,mdtext,content,keyword,desc,time.time(),id))
+                        'slug=?,keyword=?,desc=?,update_at=? where id=?',
+                        (title,mdtext,content,slug,keyword,desc,time.time(),id))
                 db.commit()
             return redirect(url_for('post_edit',id=id))
 
         else:
 
-            cursor.execute('insert into posts values(null,?,?,?,?,?,?,?)',(title,
-                mdtext,content,keyword,desc,time.time(),time.time()))
+            cursor.execute('insert into posts values(null,?,?,?,?,?,?,?,?)',(title,
+                mdtext,content,slug,keyword,desc,time.time(),time.time()))
             db.commit()
             return redirect(url_for('post_edit',id=cursor.lastrowid))
     else:
