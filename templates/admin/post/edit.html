@@ -5,11 +5,12 @@
 <link rel="stylesheet" href="{{ url_for('static',filename='css/editor.css')}}" type="text/css" media="screen" title="no title" charset="utf-8">
 {% endblock %}
 {% block body %}
-<form action="{{ url_for("post_edit") }}" method="post" accept-charset="utf-8">
+<form action="{{ url_for("post_edit") }}" method="POST" accept-charset="utf-8">
     <input type="text" value="{{ post.title }}" name="title" placeholder="标题" id="title"/>
-    <textarea name="content" id="editor">{{ post.text }}</textarea>
-
-    <p><input type="submit" value="Continue →"></p>
+    <textarea name="markdown" id="editor">{{ post.markdown }}</textarea>
+    <input type="hidden" name="id" value="{{ post.id }}" />
+    
+    <p><input type="submit" value="保存"></p>
 </form>
 {% endblock %}
 

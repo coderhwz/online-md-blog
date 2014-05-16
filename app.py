@@ -1,6 +1,7 @@
 import os
 import sqlite3
 import time
+import markdown
 from flask import Flask,request,session,g,redirect,url_for,abort,render_template,flash
 
 app = Flask(__name__)
@@ -57,13 +58,17 @@ def home():
     """
     return render_template('home.html')
 
-@app.route('/<int:id>.html')
+@app.route('/<id>')
 def post(id):
     """@todo: Docstring for post.
     :returns: @todo
 
     """
-    return render_template('post.html')
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('select * from posts where id=?',(id))
+    post = cursor.fetchone()
+    return render_template('post.html',post=post)
 
 @app.route('/admin/posts')
 def list_posts():
@@ -72,23 +77,51 @@ def list_posts():
 
     """
     db = get_db()
-    return render_template('admin/post/list.html')
+    cursor = db.cursor()
+    cursor.execute('select * from posts')
+    posts = cursor.fetchall()
+    return render_template('admin/post/list.html',posts=posts)
 
-@app.route('/admin/post/edit',methods=["GET","POST"])
-def post_edit(post_id=None):
+@app.route('/admin/post/edit',methods=['GET','POST'])
+def post_edit():
+    id = request.args.get('id',None)
+    if not id:
+        id = request.form.get('id',None) 
     db = get_db()
     cursor = db.cursor()
     if request.method == 'POST':
-        title = request.form['title']
-        content = request.form['content']
-        cursor.execute('insert into posts values(null,?,?,?,?)',(title,content,time.time(),time.time()))
-        db.commit()
-        return redirect(url_for('post_edit',id=cursor.lastrowid))
+        title = request.form.get('title')
+        mdtext = request.form.get('markdown','')
+        md = markdown.Markdown(extensions=['extra','codehilite','admonition','meta'])
+        content = md.convert(mdtext)
+        keyword = md.Meta.get('keyword',[""])[0]
+        desc = md.Meta.get('description',[""])[0]
+        if id:
+            cursor.execute('select * from posts where id=%s' % (id))
+            post = cursor.fetchone()
+            if not post:
+                return 'post not avaliable'
+            else:
+                cursor.execute('update posts set title=?,markdown=?,content=?,'+
+                        'keyword=?,desc=?,update_at=? where id=?',
+                        (title,mdtext,content,keyword,desc,time.time(),id))
+                db.commit()
+            return redirect(url_for('post_edit',id=id))
+
+        else:
+
+            cursor.execute('insert into posts values(null,?,?,?,?,?,?,?)',(title,
+                markdown,content,str(keyword),desc,time.time(),time.time()))
+            db.commit()
+            return redirect(url_for('post_edit',id=cursor.lastrowid))
     else:
-        id = request.args['id']
-        cursor.execute('select * from posts where id=%s' % (id))
-        post = cursor.fetchone()
+        if id != None:
+            cursor.execute('select * from posts where id=%s' % (id))
+            post = cursor.fetchone()
+        else:
+            post = {}
         return render_template('admin/post/edit.html',post=post)
+
 
 
 if __name__ == '__main__':
