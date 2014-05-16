@@ -1,4 +1,11 @@
+{% extends "layout.html" %}
 {% block body %}
-home
+<h1 class="title">coderhwz's blog</h1>
+<ul class="articles">
+{% for post in posts %}
+<li><a href="{{ url_for('show_post',slug=post.slug) }}" alt="{{ post.title }}">{{ post.title }}</a>
+{{ post.create_at | timefmt }}</li>
+{% endfor%}
+</ul>
 {% endblock %}
 

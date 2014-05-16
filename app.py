@@ -2,10 +2,14 @@ import os
 import sqlite3
 import time
 import markdown
+import datetime
+import filters
 from flask import Flask,request,session,g,redirect,url_for,abort,render_template,flash,abort
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+
+app.jinja_env.filters['timefmt'] = filters.timefmt
 
 app.config.update(dict(
     DATABASE=os.path.join(app.root_path,'blog.db'),
@@ -59,16 +63,15 @@ def page_not_found(e):
     return render_template('404.html'),404
 @app.route('/')
 def home():
-    """@todo: Docstring for home.
-
-    :arg1: @todo
-    :returns: @todo
-
-    """
-    return render_template('home.html')
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('select * from posts')
+    posts = cursor.fetchall()
+    # posts = dict()
+    return render_template('home.html',posts=posts)
 
 @app.route('/<slug>.html')
-def post(slug):
+def show_post(slug):
     """@todo: Docstring for post.
     :returns: @todo
 
@@ -93,6 +96,15 @@ def list_posts():
     posts = cursor.fetchall()
     return render_template('admin/post/list.html',posts=posts)
 
+
+@app.route('/admin/settings')
+def settings():
+    """@todo: Docstring for settings.
+    :returns: @todo
+
+    """
+    return ''
+
 @app.route('/admin/post/edit',methods=['GET','POST'])
 def post_edit():
     id = request.args.get('id',None)
@@ -104,11 +116,10 @@ def post_edit():
         mdtext = request.form.get('markdown','')
         md = markdown.Markdown(extensions=['extra','codehilite','admonition','meta'])
         content = md.convert(mdtext)
-        title = md.Meta.get('title',[""])[0]
-        keyword = md.Meta.get('keyword',[""])[0]
+        title = md.Meta.get('title',[""])[0].strip()
+        keyword = md.Meta.get('keyword',[""])[0].strip()
         slug = md.Meta.get('slug',[""])[0].strip()
-        # return keyword
-        desc = md.Meta.get('description',[""])[0]
+        desc = md.Meta.get('description',[""])[0].strip()
         if id:
             cursor.execute('select * from posts where id=%s' % (id))
             post = cursor.fetchone()

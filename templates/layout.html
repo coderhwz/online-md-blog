@@ -1,14 +1,15 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>layout</title>
+        <title>coderhwz</title>
+        <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}" type="text/css" media="screen" charset="utf-8">
         {% block head %}
-
         {% endblock %}
     </head>
-    <body id="Hallo" onload="">
-        {% block body %}
-
-        {% endblock %}
+    <body>
+        <div class="wrapper">
+            {% block body %}
+            {% endblock %}
+        </div>
     </body>
 </html>

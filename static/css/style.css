@@ -1,0 +1,27 @@
+html,body{
+    padding:0;
+    margin:0;
+}
+body{
+    background:url(../images/bg.jpg) repeat;
+}
+.wrapper{
+    width:70%;
+    /* height:9%; */
+    margin:10 auto;
+    background-color:#fff;
+    border-radius:3px;
+    padding:10px;
+}
+a{
+    text-decoration:none;
+    color:green;
+}
+a:visited{
+    
+}
+.title{
+    /* border:1px solid ; */
+    border-bottom:1px solid;
+    padding:3px;
+}
