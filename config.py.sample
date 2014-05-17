@@ -1,0 +1,6 @@
+config = dict(
+        username='',
+        password='',
+        secret_key='',
+        debug=True
+        )
