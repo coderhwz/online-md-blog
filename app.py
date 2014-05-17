@@ -89,7 +89,7 @@ def login():
         if username != config['username']:
             return 'user name not match'
 
-        if bcrypt.hashpw(password,config['password']) == config['password']:
+        if bcrypt.hashpw(password.encode('utf-8'),config['password']) == config['password']:
             session['login'] = True
             return redirect(url_for('list_posts'))
         else:
