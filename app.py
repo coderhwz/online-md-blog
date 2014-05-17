@@ -1,3 +1,4 @@
+#--coding:utf-8--
 import os
 import sqlite3
 import time
@@ -9,20 +10,23 @@ from config import config
 from functools import wraps
 from flask import Flask,request,session,g,redirect,url_for,abort,render_template,flash,abort
 
-app = Flask(__name__)
-app.config.from_object(__name__)
+def create_app():
+    """创建一个新项目"""
+    newApp = Flask(__name__)
+    newApp.config.from_object(__name__)
 
-app.jinja_env.filters['timefmt'] = filters.timefmt
+    newApp.jinja_env.filters['timefmt'] = filters.timefmt
 
-app.config.update(dict(
-    DATABASE=os.path.join(app.root_path,'blog.db'),
-    DEBUG=config.get('debug',False),
-    SECRET_KEY=config['secret_key'],
-    USERNAME=config['username'],
-    PASSWORD=config['password'],
-))
-app.config.from_envvar('FLASKR_SETTINGS',silent=True)
-
+    newApp.config.update(dict(
+        DATABASE=os.path.join(newApp.root_path,'blog.db'),
+        DEBUG=config.get('debug',False),
+        SECRET_KEY=config['secret_key'],
+        USERNAME=config['username'],
+        PASSWORD=config['password'],
+        ))
+    newApp.config.from_envvar('FLASKR_SETTINGS',silent=True)
+    return newApp 
+app = create_app()
 def connect_db():
     """Connects to the specific database."""
     rv = sqlite3.connect(app.config['DATABASE'])
