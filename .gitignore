@@ -1,3 +1,4 @@
 env/
 *.pyc
 blog.db
+config.py

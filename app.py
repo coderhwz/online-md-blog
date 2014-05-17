@@ -4,6 +4,9 @@ import time
 import markdown
 import datetime
 import filters
+import bcrypt
+from config import config
+from functools import wraps
 from flask import Flask,request,session,g,redirect,url_for,abort,render_template,flash,abort
 
 app = Flask(__name__)
@@ -13,10 +16,10 @@ app.jinja_env.filters['timefmt'] = filters.timefmt
 
 app.config.update(dict(
     DATABASE=os.path.join(app.root_path,'blog.db'),
-    DEBUG=True,
-    SECRET_KEY='dev',
-    USERNAME='admin',
-    PASSWORD='default',
+    DEBUG=config.get('debug',False),
+    SECRET_KEY=config['secret_key'],
+    USERNAME=config['username'],
+    PASSWORD=config['password'],
 ))
 app.config.from_envvar('FLASKR_SETTINGS',silent=True)
 
@@ -41,6 +44,13 @@ def get_db():
         g.sqlite_db = connect_db()
     return g.sqlite_db
 
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if True != session.get('login',False):
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated
 @app.teardown_appcontext
 def close_db(xx):
     """@todo: Docstring for close_db.
@@ -61,6 +71,32 @@ def page_not_found(e):
 
     """
     return render_template('404.html'),404
+
+@app.route('/login',methods=['POST','GET'])
+def login():
+    """@todo: Docstring for login.
+    :returns: @todo
+
+    """
+    if request.method =='GET':
+        return render_template('login.html')
+    else:
+        username = request.form.get('username',None)
+        password = request.form.get('password',None)
+        if not username or not password:
+            return 'username || password need'
+
+        if username != config['username']:
+            return 'user name not match'
+
+        if bcrypt.hashpw(password,config['password']) == config['password']:
+            session['login'] = True
+            return redirect(url_for('list_posts'))
+        else:
+            return 'auth error'
+
+
+
 @app.route('/')
 def home():
     db = get_db()
@@ -85,6 +121,7 @@ def show_post(slug):
     return render_template('post.html',post=post)
 
 @app.route('/admin/posts')
+@requires_auth
 def list_posts():
     """@todo: Docstring for list_posts.
     :returns: @todo
@@ -98,6 +135,7 @@ def list_posts():
 
 
 @app.route('/admin/settings')
+@requires_auth
 def settings():
     """@todo: Docstring for settings.
     :returns: @todo
@@ -106,6 +144,7 @@ def settings():
     return ''
 
 @app.route('/admin/post/edit',methods=['GET','POST'])
+@requires_auth
 def post_edit():
     id = request.args.get('id',None)
     if not id:
@@ -133,7 +172,6 @@ def post_edit():
             return redirect(url_for('post_edit',id=id))
 
         else:
-
             cursor.execute('insert into posts values(null,?,?,?,?,?,?,?,?)',(title,
                 mdtext,content,slug,keyword,desc,time.time(),time.time()))
             db.commit()
@@ -149,5 +187,4 @@ def post_edit():
 
 
 if __name__ == '__main__':
-    app.debug = True
     app.run()
