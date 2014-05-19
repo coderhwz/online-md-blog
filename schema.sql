@@ -19,3 +19,19 @@ create table categories (
     create_at integer not null,
     update_at integer not null
 );
+
+drop table if exists tags;
+create table tags (
+    id integer primary key autoincrement,
+    name text not null,
+    create_at integer not null
+);
+
+drop table if exists rels;
+create table rels (
+    id integer primary key autoincrement,
+    tag_id integer not null,
+    post_id integer not null
+);
+
+

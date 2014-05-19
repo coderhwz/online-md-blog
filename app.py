@@ -26,7 +26,9 @@ def create_app():
         ))
     newApp.config.from_envvar('FLASKR_SETTINGS',silent=True)
     return newApp 
+
 app = create_app()
+
 def connect_db():
     """Connects to the specific database."""
     rv = sqlite3.connect(app.config['DATABASE'])
@@ -49,12 +51,15 @@ def get_db():
     return g.sqlite_db
 
 def requires_auth(f):
+    """ 验证装饰器
+    """
     @wraps(f)
     def decorated(*args, **kwargs):
         if True != session.get('login',False):
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated
+
 @app.teardown_appcontext
 def close_db(xx):
     """@todo: Docstring for close_db.
@@ -93,7 +98,8 @@ def login():
         if username != config['username']:
             return 'user name not match'
 
-        if bcrypt.hashpw(password.encode('utf-8'),config['password']) == config['password']:
+        hashed = bcrypt.hashpw(password.encode('utf-8'),config['password'])
+        if  hashed == config['password']:
             session['login'] = True
             return redirect(url_for('list_posts'))
         else:
@@ -107,7 +113,6 @@ def home():
     cursor = db.cursor()
     cursor.execute('select * from posts')
     posts = cursor.fetchall()
-    # posts = dict()
     return render_template('home.html',posts=posts)
 
 @app.route('/<slug>.html')
@@ -157,12 +162,15 @@ def post_edit():
     cursor = db.cursor()
     if request.method == 'POST':
         mdtext = request.form.get('markdown','')
-        md = markdown.Markdown(extensions=['extra','codehilite','admonition','meta'])
+        md = markdown.Markdown(extensions=['extra','codehilite',
+            'admonition','meta'])
         content = md.convert(mdtext)
         title = md.Meta.get('title',[""])[0].strip()
         keyword = md.Meta.get('keyword',[""])[0].strip()
         slug = md.Meta.get('slug',[""])[0].strip()
         desc = md.Meta.get('description',[""])[0].strip()
+        status = md.Meta.get('status',[""])[0].strip()
+        tags = md.Meta.get('tags',[""])[0].strip()
         if id:
             cursor.execute('select * from posts where id=%s' % (id))
             post = cursor.fetchone()
@@ -172,12 +180,17 @@ def post_edit():
                 cursor.execute('update posts set title=?,markdown=?,content=?,'+
                         'slug=?,keyword=?,desc=?,update_at=? where id=?',
                         (title,mdtext,content,slug,keyword,desc,time.time(),id))
+                ids = save_tags(tags)
+                save_rels(ids,id)
+
                 db.commit()
             return redirect(url_for('post_edit',id=id))
 
         else:
             cursor.execute('insert into posts values(null,?,?,?,?,?,?,?,?)',(title,
                 mdtext,content,slug,keyword,desc,time.time(),time.time()))
+            ids = save_tags(tags)
+            save_rels(ids,cursor.lastrowid)
             db.commit()
             return redirect(url_for('post_edit',id=cursor.lastrowid))
     else:
@@ -188,7 +201,48 @@ def post_edit():
             post = {}
         return render_template('admin/post/edit.html',post=post)
 
+def save_tags(tags):
+    """@todo: 保存标签.
+
+    :tags: @todo
+    :returns: @todo
+
+    """
+    if len(tags) < 1:
+        return 
+    tags = tags.split('..')
+    ids = []
+    db = get_db()
+    for tag in tags:
+        cursor = db.cursor()
+        cursor.execute('select * from tags where name=?',(tag))
+        t = cursor.fetchone()
+        if not t:
+            cursor.execute('insert into tags value(null,name,create_at)',
+                    (tag,time.time()))
+            ids.append(cursor.lastrowid)
+        else:
+            ids.append(t['id'])
+
+    return ids
+
+def save_rels(tag_ids,post_id):
+    """@todo: Docstring for save_rels.
+
+    :tag_ids: @todo
+    :post_id: @todo
+    :returns: @todo
+
+    """
+    db = get_db()
+    for id in tags_id:
+        cursor = db.cursor()
+        cursor.execute('select * from rels where post_id=?,tag_id=?',
+                (post_id,tag_id))
+        row = cursor.fetchone()
+        if not row:
+            cursor.execute('insert into rels values(null,?,?)',(
+                tag_id,post_id))
 
 
-if __name__ == '__main__':
-    app.run()
+
