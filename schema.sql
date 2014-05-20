@@ -7,6 +7,7 @@ create table posts (
     slug text ,
     keyword text ,
     desc text,
+    status text not null,
     create_at integer not null,
     update_at integer not null
 );
