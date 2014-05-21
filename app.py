@@ -148,8 +148,10 @@ def show_tag_posts(slug):
     cursor = db.cursor()
     cursor.execute('SELECT * FROM tags WHERE name="%s"' % (slug))
     tag = cursor.fetchone()
+    if not tag:
+        abort(404)
     cursor.execute('SELECT * FROM posts JOIN tags WHERE posts.status="publish"'
-            ' AND  tags.name="%s"'% (slug))
+            ' AND  tags.name=?', (slug))
     posts = cursor.fetchall()
     return render_template('tag-posts.html',posts=posts,tag=tag)
 
@@ -192,7 +194,7 @@ def post_edit():
             'admonition','meta'])
         content = md.convert(mdtext)
         title = md.Meta.get('title',[""])[0].strip()
-        keyword = md.Meta.get('keyword',[""])[0].strip()
+        keyword = md.Meta.get('keywords',[""])[0].strip()
         slug = md.Meta.get('slug',[""])[0].strip()
         desc = md.Meta.get('description',[""])[0].strip()
         status = md.Meta.get('status',[""])[0].strip()
@@ -228,6 +230,8 @@ def post_edit():
             post = cursor.fetchone()
         else:
             post = {}
+            post['markdown']="title: \nkeyword:\ndescription: \ntags: \n"\
+                    "slug: \nstatus: publish\n"
         return render_template('admin/post/edit.html',post=post)
 
 def save_tags(tags):

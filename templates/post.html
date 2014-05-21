@@ -1,8 +1,16 @@
 {% extends "layout.html" %}
 
+{% block keywords %}
+{{ post.keyword }}
+{% endblock %}
+
+{% block desc %}
+{{ post.desc }}
+{% endblock %}
+
 {% block head %}
 
-<link rel="stylesheet" href="{{ url_for('static',filename='css/pygments/default.css') }}" type="text/css" media="screen" title="no title" charset="utf-8">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/pygments/default.css') }}" type="text/css" media="screen" charset="utf-8">
 {% endblock%}
 
 {% block body %}
