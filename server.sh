@@ -1,2 +1,37 @@
-uwsgi --socket 127.0.0.1:3031 --wsgi-file uwsgi.py --callable app  --stats 127.0.0.1:9191 --daemonize /var/log/uwsgi.log
-# --processes 4 --threads 2
+#!/bin/bash
+
+PID="/tmp/uwsgi.pid"
+
+Start()
+{
+    if  test -f "$PID" ; then
+        echo 'there is pid file already'
+    else
+        uwsgi uwsgi.ini
+        echo 'started'
+    fi
+    return
+}
+Stop()
+{
+    if test -f "$PID"; then
+        kill -9 `cat $PID`
+        rm $PID
+        echo 'stoped'
+    else
+        echo "no pid found $PID"
+    fi
+}
+
+case $1 in
+    start)
+        Start
+        ;;
+    stop)
+        Stop
+        ;;
+    restart)
+        Stop
+        Start
+        ;;
+esac
