@@ -150,8 +150,9 @@ def show_tag_posts(slug):
     tag = cursor.fetchone()
     if not tag:
         abort(404)
-    cursor.execute('SELECT * FROM posts JOIN tags WHERE posts.status="publish"'
-            ' AND  tags.name=?', (slug))
+
+    cursor.execute('SELECT * FROM posts WHERE status = "publish" AND '\
+            'id IN(SELECT post_id FROM rels WHERE tag_id=%s)'% (tag['id']))
     posts = cursor.fetchall()
     return render_template('tag-posts.html',posts=posts,tag=tag)
 
@@ -196,6 +197,7 @@ def post_edit():
         title = md.Meta.get('title',[""])[0].strip()
         keyword = md.Meta.get('keywords',[""])[0].strip()
         slug = md.Meta.get('slug',[""])[0].strip()
+
         desc = md.Meta.get('description',[""])[0].strip()
         status = md.Meta.get('status',[""])[0].strip()
         tags = md.Meta.get('tags',[""])[0].strip()
@@ -203,6 +205,9 @@ def post_edit():
         if id:
             cursor.execute('SELECT * FROM posts WHERE id=%s' % (id))
             post = cursor.fetchone()
+
+            if slug != post['slug'] and slug_exists(slug):
+                return "slug exists"
             if not post:
                 abort(404)
             else:
@@ -217,6 +222,8 @@ def post_edit():
             return redirect(url_for('post_edit',id=id))
 
         else:
+            if slug_exists(slug):
+                return "slug exists"
             cursor.execute('INSERT INTO posts VALUES(null,?,?,?,?,?,?,?,?,?)',
                     (title, mdtext,content,slug,keyword,desc,status,
                         time.time(),time.time()))
@@ -233,6 +240,22 @@ def post_edit():
             post['markdown']="title: \nkeyword:\ndescription: \ntags: \n"\
                     "slug: \nstatus: publish\n"
         return render_template('admin/post/edit.html',post=post)
+
+def slug_exists(slug):
+    """检查slug是否已经存在
+
+    :slug: @todo
+    :returns: @todo
+
+    """
+    slug = slug.strip()
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('SELECT * FROM posts WHERE slug="%s"'%(slug))
+    one = cursor.fetchone()
+    return one
+
+
 
 def save_tags(tags):
     """
@@ -260,6 +283,8 @@ def save_rels(tag_ids,post_id):
     """
     保存标签关系.
     """
+    if not tag_ids:
+        return 
     db = get_db()
     for id in tag_ids:
         cursor = db.cursor()
