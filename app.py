@@ -13,18 +13,13 @@ from flask import Flask,request,session,g,redirect,url_for,abort,render_template
 def create_app():
     """创建一个新项目"""
     newApp = Flask(__name__)
-    newApp.config.from_object(__name__)
+    # newApp.config.from_object(__name__)
 
     newApp.jinja_env.filters['timefmt'] = filters.timefmt
 
-    newApp.config.update(dict(
-        DATABASE=os.path.join(newApp.root_path,'blog.db'),
-        DEBUG=config.get('debug',False),
-        SECRET_KEY=config['secret_key'],
-        USERNAME=config['username'],
-        PASSWORD=config['password'],
-        ))
-    newApp.config.from_envvar('FLASKR_SETTINGS',silent=True)
+    newApp.config.update(config)
+
+    # newApp.config.from_envvar('FLASKR_SETTINGS',silent=True)
     return newApp 
 
 app = create_app()
@@ -92,12 +87,12 @@ def login():
         if not username or not password:
             return 'username || password need'
 
-        if username != config['username']:
+        if username != config['USERNAME']:
             return 'user name not match'
 
         # 需要utf8
-        hashed = bcrypt.hashpw(password.encode('utf-8'),config['password'])
-        if  hashed == config['password']:
+        hashed = bcrypt.hashpw(password.encode('utf-8'),config['PASSWORD'])
+        if  hashed == config['PASSWORD']:
             session['login'] = True
             return redirect(url_for('list_posts'))
         else:
