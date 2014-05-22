@@ -9,10 +9,12 @@
     <textarea name="markdown" id="editor">{{ post.markdown }}</textarea>
     <input type="hidden" name="id" value="{{ post.id }}" />
     
-    <p><input type="submit" value="保存"></p>
-    <a href="{{ url_for('list_posts') }}" >文章列表</a>
-    <a href="{{ url_for('show_post',slug=post.slug) }}" target="_blank" >查看文章</a>
-    <a href="{{ url_for('settings') }}" >设置</a>
+    <div class="fixed">
+        <a class="list" href="{{ url_for('list_posts') }}" >文章列表</a>
+        <a class="view" href="{{ url_for('show_post',slug=post.slug) }}" target="_blank" >查看文章</a>
+        <a class="settings"href="{{ url_for('settings') }}" >设置</a>
+        <input class="save" type="submit" value="保存" />
+    </div>
 </form>
 {% endblock %}
 

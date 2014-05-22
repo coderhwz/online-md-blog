@@ -1,14 +1,22 @@
 {% extends "admin/layout.html" %}
 {% block body %}
-<a href="{{ url_for('post_edit') }}" >写博客</a>
-<span>文章数量：{{ stats.posts_cnt }}</span>
-<span>发布数量：{{ stats.pub_cnt }}</span>
-<span>标签数量：{{ stats.tags_cnt }}</span>
-<ul>
+<div class="fixed">
+    <form method="GET" action="{{ url_for('list_posts') }}">
+        <input type="text" name="s" placeholder="搜索..." value="{{ keyword }}"/>
+    </form>
+    <a href="{{ url_for('post_edit') }}" >写博客</a>
+    <p>文章数量：{{ stats.posts_cnt }}</p>
+    <p>发布数量：{{ stats.pub_cnt }}</p>
+    <p>标签数量：{{ stats.tags_cnt }}</p>
+</div>
+<h1>文章列表</h1>
+<ul class="posts-list">
     {% for post in posts %}
     <li>
         <a href="{{ url_for('show_post',slug=post.slug) }}" target="_blank" >{{ post.title }}</a>
-        <a href="{{ url_for('post_edit',id=post.id)}}" >编辑</a>
+        <a onclick="return confirm('确定删除？')" class="btn" href="{{ url_for('post_delete',id=post.id)}}" >删除</a>
+        <a class="btn" href="{{ url_for('post_edit',id=post.id)}}" >编辑</a>
+        <span class="btn date">{{ post.create_at | timefmt }}</span>
     </li>
     {% endfor %}
 </ul>

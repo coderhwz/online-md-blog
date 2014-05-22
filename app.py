@@ -124,7 +124,8 @@ def get_stats():
 def home():
     db = get_db()
     cursor = db.cursor()
-    cursor.execute('SELECT * FROM posts WHERE status="publish"')
+    cursor.execute('SELECT * FROM posts WHERE status="publish" ORDER BY'
+            ' create_at DESC')
     posts = cursor.fetchall()
     return render_template('home.html',posts=posts)
 
@@ -186,10 +187,31 @@ def list_posts():
     """
     db = get_db()
     cursor = db.cursor()
-    cursor.execute('SELECT * FROM posts')
+    sql = 'SELECT * FROM posts';
+    keyword = request.args.get('s',None)
+    if keyword:
+        sql = sql+ ' WHERE title LIKE "%s"' % ('%' + keyword +'%')
+    sql = sql + ' ORDER BY create_at DESC'
+    cursor.execute(sql)
     posts = cursor.fetchall()
     stats = get_stats()
-    return render_template('admin/post/list.html',posts=posts,stats=stats)
+    return render_template('admin/post/list.html',posts=posts,stats=stats,
+            keyword=keyword)
+
+@app.route('/admin/post/delete/<int:id>')
+@requires_auth
+def post_delete(id):
+    """@todo: Docstring for delete_posts.
+
+    :arg1: @todo
+    :returns: @todo
+
+    """
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM posts WHERE id=%s"%(id))
+    db.commit()
+    return redirect(url_for('list_posts'))
 
 
 @app.route('/admin/settings')
