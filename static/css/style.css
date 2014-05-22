@@ -19,7 +19,7 @@ a{
     color:green;
 }
 a:visited{
-    
+
 }
 article h1{
     border-bottom:1px dashed #D9D9DC;
@@ -32,6 +32,9 @@ article{
     color:#444;
     line-height:20px;
     min-height:80%;
+}
+p {
+    text-indent:24px;
 }
 
 article h2{
