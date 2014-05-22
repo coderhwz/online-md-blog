@@ -4,6 +4,9 @@
         <title>{% block title %}coderhwz's blog{% endblock %}</title>
         <meta name="keywords" content="{% block keywords %}{% endblock %}" />
         <meta name="description" content="{% block desc %}{% endblock %}" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" type="image/png" href="{{ url_for('static',filename='favicon.ico') }}">
         <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}" type="text/css" media="screen" charset="utf-8">
         {% block head %}
