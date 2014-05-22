@@ -118,7 +118,7 @@ def show_post(slug):
     cursor = db.cursor()
     cursor.execute('SELECT * FROM posts WHERE id=? OR slug=?',(slug,slug))
     post = cursor.fetchone()
-    if post['status'] != 'publish':
+    if post['status'] != 'publish' and not session['login']:
         abort(401)
     if not post:
         abort(404)
