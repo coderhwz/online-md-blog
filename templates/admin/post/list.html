@@ -1,6 +1,9 @@
 {% extends "admin/layout.html" %}
 {% block body %}
 <a href="{{ url_for('post_edit') }}" >写博客</a>
+<span>文章数量：{{ stats.posts_cnt }}</span>
+<span>发布数量：{{ stats.pub_cnt }}</span>
+<span>标签数量：{{ stats.tags_cnt }}</span>
 <ul>
     {% for post in posts %}
     <li>

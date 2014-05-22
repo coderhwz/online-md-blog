@@ -99,6 +99,26 @@ def login():
             return 'auth error'
 
 
+def get_stats():
+    """@todo: Docstring for get_stats.
+    :returns: @todo
+
+    """
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('SELECT count(*) from posts');
+    posts_cnt = cursor.fetchone()
+    cursor.execute('SELECT count(*) FROM posts WHERE status="publish"')
+    pub_cnt = cursor.fetchone()
+    cursor.execute('SELECT count(*) FROM tags')
+    tags_cnt = cursor.fetchone()
+    return {
+            'posts_cnt':posts_cnt[0],
+            'pub_cnt':pub_cnt[0],
+            'tags_cnt':tags_cnt[0]
+            }
+
+    
 
 @app.route('/')
 def home():
@@ -168,7 +188,8 @@ def list_posts():
     cursor = db.cursor()
     cursor.execute('SELECT * FROM posts')
     posts = cursor.fetchall()
-    return render_template('admin/post/list.html',posts=posts)
+    stats = get_stats()
+    return render_template('admin/post/list.html',posts=posts,stats=stats)
 
 
 @app.route('/admin/settings')
