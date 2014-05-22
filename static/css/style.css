@@ -31,6 +31,7 @@ article{
     font-size:14px;
     color:#444;
     line-height:20px;
+    min-height:80%;
 }
 
 article h2{
@@ -42,7 +43,6 @@ article pre{
 article code{
     font-size:12px;
     background:#f8f8f8;
-    /* color:#c7254e; */
 }
 article img{
     width:100%;
