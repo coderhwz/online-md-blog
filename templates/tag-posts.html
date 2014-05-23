@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 {% block body %}
 <h1 class="title">Tag:{{ tag.name }}</h1>
-<ul class="articles">
+<ul class="list articles">
 {% for post in posts %}
-<li><a href="{{ url_for('show_post',slug=post.slug) }}" alt="{{ post.title }}">{{ post.title }}</a>
-{{ post.create_at | timefmt }}</li>
+    <li><a href="{{ url_for('show_post',slug=post.slug) }}" alt="{{ post.title }}">{{ post.title }}</a>
+    <span class="time"> {{ post.create_at | timefmt }}</li> </span>
 {% endfor%}
 </ul>
 {% endblock %}

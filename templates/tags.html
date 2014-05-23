@@ -2,10 +2,10 @@
 
 {% block body %}
 <h1 class="title">Tags</h1>
-<ul class="tags">
+<ul class="list tags">
 {% for tag in tags %}
 <li><a href="{{ url_for('show_tag_posts',slug=tag.name) }}" alt="{{ tag.name }}">{{ tag.name }}</a>
-{{ tag.create_at | timefmt }}</li>
+<span class="time"> {{ tag.create_at | timefmt }}</li> </span>
 {% endfor%}
 </ul>
 {% endblock %}

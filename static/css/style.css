@@ -50,16 +50,19 @@ article code{
 article img{
     width:100%;
 }
-.articles{
+.codehilite pre {
+    overflow:auto;
+}
+.list{
     font-size:14px;
     color:#444;
     line-height:20px;
 }
-.articles li{
+.list li{
     padding:10px;
     border-bottom:1px dashed #D9D9DC;
 }
-.articles .time{
+.list .time{
     float:right;
 }
 .footer{

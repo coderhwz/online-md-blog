@@ -234,7 +234,7 @@ def post_edit():
     cursor = db.cursor()
     if request.method == 'POST':
         mdtext = request.form.get('markdown','')
-        md = markdown.Markdown(extensions=['extra','codehilite',
+        md = markdown.Markdown(extensions=['extra','fenced_code','codehilite',
             'admonition','meta'])
         content = md.convert(mdtext)
         title = md.Meta.get('title',[""])[0].strip()

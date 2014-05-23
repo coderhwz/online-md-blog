@@ -68,6 +68,9 @@ h1{
     padding:10px;
     border-bottom:1px dashed #D9D9DC;
 }
+.posts-list li:hover{
+    background-color:#f7f7f9;
+}
 .posts-list .btn{
     float:right;
     padding-right:10px;
