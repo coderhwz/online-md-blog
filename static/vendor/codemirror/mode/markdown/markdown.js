@@ -700,17 +700,21 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     },
 
     token: function(stream, state) {
-        if( stream.match(/^[0-9a-zA-Z]+:/)){
-            // stream.next() 跳往非空格的下一个
-            //可以使用skipTo直接格
-            stream.skipTo(' ')
-            return 'attr';
-        };
 
       // Reset state.formatting
       state.formatting = false;
 
       if (stream.sol()) {
+
+        if( stream.match(/^[0-9a-zA-Z]+:/)){
+            // stream.next() 跳往非空格的下一个
+            //可以使用skipTo直接格
+            var r1 = stream.peek();
+            if (r1 == ' ') {
+                stream.skipTo(' ')
+            }
+            return 'attr';
+        };
         var forceBlankLine = stream.match(/^\s*$/, true) || state.header;
 
         // Reset state.header
