@@ -280,7 +280,7 @@ def post_edit():
             post = cursor.fetchone()
         else:
             post = {}
-            post['markdown']="title: \nkeyword:\ndescription: \ntags: \n"\
+            post['markdown']="title: \nkeyword: \ndescription: \ntags: \n"\
                     "slug: \nstatus: publish\n"
         return render_template('admin/post/edit.html',post=post)
 

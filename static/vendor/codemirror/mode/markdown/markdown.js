@@ -700,6 +700,12 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     },
 
     token: function(stream, state) {
+        if( stream.match(/^[0-9a-zA-Z]+:/)){
+            // stream.next() 跳往非空格的下一个
+            //可以使用skipTo直接格
+            stream.skipTo(' ')
+            return 'attr';
+        };
 
       // Reset state.formatting
       state.formatting = false;
@@ -763,3 +769,4 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 CodeMirror.defineMIME("text/x-markdown", "markdown");
 
 });
+/* vim:tabstop=2 */

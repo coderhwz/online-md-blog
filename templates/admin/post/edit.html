@@ -1,8 +1,8 @@
 {% extends "admin/layout.html" %}
 {% block head %}
-<script src="{{ url_for('static',filename = 'js/marked.js') }}" type="text/javascript" charset="utf-8"></script>
-<script src="{{ url_for('static',filename = 'js/editor.js') }}" type="text/javascript" charset="utf-8"></script>
-<link rel="stylesheet" href="{{ url_for('static',filename='css/editor.css')}}" type="text/css" media="screen" title="no title" charset="utf-8">
+<script src="{{ url_for('static',filename = 'vendor/codemirror/lib/codemirror.js') }}" type="text/javascript" charset="utf-8"></script>
+<link rel="stylesheet" href="{{ url_for('static',filename='vendor/codemirror/lib/codemirror.css')}}" type="text/css" media="screen" charset="utf-8">
+<script src="{{ url_for('static',filename = 'vendor/codemirror/mode/markdown/markdown.js') }}" type="text/javascript" charset="utf-8"></script>
 {% endblock %}
 {% block body %}
 <form action="{{ url_for("post_edit") }}" method="POST" accept-charset="utf-8">
@@ -19,11 +19,10 @@
 {% endblock %}
 
 {% block foot %}
-<script type="text/javascript" src="http://cdn.staticfile.org/zepto/1.0rc1/zepto.min.js"></script>
     <script type="text/javascript">
-        (function($) {
-            var editor = new Editor();
-            editor.render();
-        })(Zepto);
+        var myCodeMirror = CodeMirror.fromTextArea(document.getElementById('editor'),{
+            viewportMargin:Infinity,
+            //theme:'eclipse',
+        });
     </script>
 {% endblock %}
