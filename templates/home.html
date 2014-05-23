@@ -1,13 +1,15 @@
 {% extends "layout.html" %}
 {% block body %}
-<h1 class="title">coderhwz's blog</h1>
-<ul class="list articles">
-{% for post in posts %}
-<li>
-    <a class="title" href="{{ url_for('show_post',slug=post.slug) }}" alt="{{ post.title }}">{{ post.title }}</a>
-    <span class="time"> {{ post.create_at | timefmt('%Y/%m/%d') }} </span>
-</li>
-{% endfor%}
-</ul>
+<div class="content">
+    <h1 class="title">coderhwz's blog</h1>
+    <ul class="list articles">
+        {% for post in posts %}
+        <li>
+        <a class="title" href="{{ url_for('show_post',slug=post.slug) }}" alt="{{ post.title }}">{{ post.title }}</a>
+        <span class="time"> {{ post.create_at | timefmt('%Y/%m/%d') }} </span>
+        </li>
+        {% endfor%}
+    </ul>
+</div>
 {% endblock %}
 
