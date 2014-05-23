@@ -29,7 +29,7 @@ a:visited{
     color:#444;
     line-height:20px;
     height:auto;
-    border: 1px solid #eee;
+    border: 1px solid #fcfcfc;
 }
 .CodeMirror-scroll {
   /* 30px is the magic margin used to hide the element's real scrollbars */

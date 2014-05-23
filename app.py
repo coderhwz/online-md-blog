@@ -188,7 +188,7 @@ def list_posts():
     db = get_db()
     cursor = db.cursor()
     sql = 'SELECT * FROM posts';
-    keyword = request.args.get('s',None)
+    keyword = request.args.get('s','')
     if keyword:
         sql = sql+ ' WHERE title LIKE "%s"' % ('%' + keyword +'%')
     sql = sql + ' ORDER BY create_at DESC'

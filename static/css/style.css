@@ -7,7 +7,6 @@ body{
 }
 .wrapper{
     width:650px;
-    /* height:9%; */
     margin:3 auto;
     background-color:#fff;
     border-radius:3px;
@@ -17,9 +16,6 @@ body{
 a{
     text-decoration:none;
     color:green;
-}
-a:visited{
-
 }
 article h1{
     border-bottom:1px dashed #D9D9DC;
@@ -70,3 +66,29 @@ article img{
     text-align:center;
     padding:20px;
 }
+.content{
+    min-height:80%;
+}
+
+.login input{
+    height:30px;
+    line-height:30px;
+    padding:4px;
+    margin:10px auto;
+    border-radius:3px;
+    border:1px solid #eee;
+}
+
+input[type=submit]{
+    width:50px;
+    background-color:#fff;
+    margin-top:3px;
+}
+
+.login form{
+    margin:0 auto;
+    width:500px;
+    padding-top:170px;
+    text-align:center;
+}
+
