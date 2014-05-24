@@ -321,7 +321,7 @@ def save_tags(tags):
     db = get_db()
     for tag in tags:
         cursor = db.cursor()
-        cursor.execute('SELECT * FROM tags WHERE name="%s"'%(tag))
+        cursor.execute('SELECT * FROM tags WHERE lower(name)=lower("%s")'%(tag))
         t = cursor.fetchone()
         if not t:
             cursor.execute('INSERT INTO tags VALUES(null,?,?)',
