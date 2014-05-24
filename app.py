@@ -197,6 +197,16 @@ def list_posts():
     stats = get_stats()
     return render_template('admin/post/list.html',posts=posts,stats=stats,
             keyword=keyword)
+@app.route('/admin/tags')
+@requires_auth
+def admin_list_tags():
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('SELECT tags.name AS name,COUNT(rels.post_id) AS cnt FROM rels '
+            'LEFT JOIN tags ON tags.id=rels.tag_id GROUP BY tags.id')
+    tags = cursor.fetchall()
+    return render_template('admin/tags.html',tags=tags)
+
 
 @app.route('/admin/post/delete/<int:id>')
 @requires_auth
@@ -331,12 +341,9 @@ def save_rels(tag_ids,post_id):
     db = get_db()
     for id in tag_ids:
         cursor = db.cursor()
-        cursor.execute('SELECT * FROM rels WHERE post_id=? AND tag_id=?',
-                (post_id,id))
-        row = cursor.fetchone()
-        if not row:
-            cursor.execute('INSERT INTO rels VALUES(NULL,?,?)',(
-                id,post_id))
+        cursor.execute('DELETE FROM rels WHERE post_id=%s'% (post_id))
+        cursor.execute('INSERT INTO rels VALUES(NULL,?,?)',(
+            id,post_id))
 
 
 
