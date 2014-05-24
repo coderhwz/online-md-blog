@@ -1,10 +1,5 @@
 #--coding:utf-8--
-import os
-import sqlite3
-import time
-import markdown
-import datetime
-import bcrypt
+import os,sqlite3,time,datetime,markdown,bcrypt
 from functools import wraps
 from flask import request,session,g,redirect,url_for,abort,\
         render_template,flash,abort,make_response
