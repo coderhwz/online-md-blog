@@ -5,7 +5,7 @@
 <script src="{{ url_for('static',filename = 'vendor/codemirror/mode/markdown/markdown.js') }}" type="text/javascript" charset="utf-8"></script>
 {% endblock %}
 {% block body %}
-<form action="{{ url_for("post_edit") }}" method="POST" accept-charset="utf-8">
+<form action="{{ url_for("edit_post") }}" method="POST" accept-charset="utf-8">
     <textarea name="markdown" id="editor">{{ post.markdown }}</textarea>
     <input type="hidden" name="id" value="{{ post.id }}" />
     

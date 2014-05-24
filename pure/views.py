@@ -262,7 +262,7 @@ def edit_post():
                 save_rels(ids,id)
 
                 db.commit()
-            return redirect(url_for('post_edit',id=id))
+            return redirect(url_for('edit_post',id=id))
 
         else:
             if slug_exists(slug):
@@ -273,7 +273,7 @@ def edit_post():
             ids = save_tags(tags)
             save_rels(ids,cursor.lastrowid)
             db.commit()
-            return redirect(url_for('post_edit',id=cursor.lastrowid))
+            return redirect(url_for('edit_post',id=cursor.lastrowid))
     else:
         if id != None:
             cursor.execute('SELECT * FROM posts WHERE id=?' , (id,))
