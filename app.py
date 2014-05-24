@@ -8,7 +8,8 @@ import filters
 import bcrypt
 from config import config
 from functools import wraps
-from flask import Flask,request,session,g,redirect,url_for,abort,render_template,flash,abort
+from flask import Flask,request,session,g,redirect,url_for,abort,\
+        render_template,flash,abort,make_response
 
 def create_app():
     """创建一个新项目"""
@@ -296,6 +297,21 @@ def post_edit():
             post['markdown']="title: \nkeyword: \ndescription: \ntags: \n"\
                     "slug: \nstatus: publish\n"
         return render_template('admin/post/edit.html',post=post)
+
+
+@app.route('/feed')
+def feed():
+    """@todo: Docstring for feed.
+    :returns: @todo
+
+    """
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM posts WHERE status='publish'")
+    posts = cursor.fetchall()
+    response =  make_response(render_template('rss.xml',posts=posts))
+    response.mimetype = 'text/xml'
+    return response
 
 def slug_exists(slug):
     """检查slug是否已经存在

@@ -1,0 +1,23 @@
+<rss version="2.0">
+    <channel>
+        <title>coderhwz's blog</title>
+        <link>{{ url_for('home') }}</link>
+        <description>he</description>
+        <language>en-us</language>
+        <pubDate></pubDate>
+        <lastBuildDate>Tue, 10 Jun 2003 09:41:01 GMT</lastBuildDate>
+        <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+        <generator>Weblog Editor 2.0</generator>
+        <managingEditor>coderhwz@gmail.com</managingEditor>
+        <webMaster>coderhwz@gmail.com</webMaster>
+        {% for post in posts %}
+        <item>
+            <title>{{ post.title }}</title>
+            <link>{{ url_for('show_post',slug=post.slug) }}</link>
+            <description> {{ post.content }} </description>
+            <pubDate>{{ post.create_at | timefmt('%a, %d %b %Y %H:%M:%S +0000') }}</pubDate>
+            <guid> {{ url_for('show_post',slug=post.slug) }} </guid>
+        </item>
+        {% endfor %}
+    </channel>
+</rss>
