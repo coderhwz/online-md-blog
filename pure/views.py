@@ -4,26 +4,12 @@ import sqlite3
 import time
 import markdown
 import datetime
-import filters
 import bcrypt
-from config import config
 from functools import wraps
-from flask import Flask,request,session,g,redirect,url_for,abort,\
+from flask import request,session,g,redirect,url_for,abort,\
         render_template,flash,abort,make_response
+from pure import app
 
-def create_app():
-    """创建一个新项目"""
-    newApp = Flask(__name__)
-    # newApp.config.from_object(__name__)
-
-    newApp.jinja_env.filters['timefmt'] = filters.timefmt
-
-    newApp.config.update(config)
-
-    # newApp.config.from_envvar('FLASKR_SETTINGS',silent=True)
-    return newApp 
-
-app = create_app()
 
 def connect_db():
     """连接数据库"""
@@ -88,12 +74,12 @@ def login():
         if not username or not password:
             return 'username || password need'
 
-        if username != config['USERNAME']:
+        if username != app.config['USERNAME']:
             return 'user name not match'
 
         # 需要utf8
-        hashed = bcrypt.hashpw(password.encode('utf-8'),config['PASSWORD'])
-        if  hashed == config['PASSWORD']:
+        hashed = bcrypt.hashpw(password.encode('utf-8'),app.config['PASSWORD'])
+        if  hashed == app.config['PASSWORD']:
             session['login'] = True
             return redirect(url_for('list_posts'))
         else:
@@ -107,11 +93,11 @@ def get_stats():
     """
     db = get_db()
     cursor = db.cursor()
-    cursor.execute('SELECT count(*) from posts');
+    cursor.execute('SELECT COUNT(*) from posts');
     posts_cnt = cursor.fetchone()
-    cursor.execute('SELECT count(*) FROM posts WHERE status="publish"')
+    cursor.execute('SELECT COUNT(*) FROM posts WHERE status="publish"')
     pub_cnt = cursor.fetchone()
-    cursor.execute('SELECT count(*) FROM tags')
+    cursor.execute('SELECT COUNT(*) FROM tags')
     tags_cnt = cursor.fetchone()
     return {
             'posts_cnt':posts_cnt[0],
@@ -214,7 +200,7 @@ def admin_list_tags():
 
 @app.route('/admin/post/delete/<int:id>')
 @requires_auth
-def post_delete(id):
+def delete_post(id):
     """@todo: Docstring for delete_posts.
 
     :arg1: @todo
@@ -240,7 +226,7 @@ def settings():
 
 @app.route('/admin/post/edit',methods=['GET','POST'])
 @requires_auth
-def post_edit():
+def edit_post():
     id = request.args.get('id',None)
     if not id:
         id = request.form.get('id',None) 

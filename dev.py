@@ -1,3 +1,3 @@
-from app import app
+from pure import app
 
 app.run()
