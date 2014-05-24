@@ -4,7 +4,7 @@
     <form method="GET" action="{{ url_for('list_posts') }}">
         <input type="text" name="s" placeholder="搜索..." value="{{ keyword }}"/>
     </form>
-    <a href="{{ url_for('post_edit') }}" >写博客</a>
+    <a href="{{ url_for('edit_post') }}" >写博客</a>
     <p>文章数量：{{ stats.posts_cnt }}</p>
     <p>发布数量：{{ stats.pub_cnt }}</p>
     <p>标签数量：{{ stats.tags_cnt }}</p>
