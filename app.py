@@ -167,13 +167,13 @@ def show_tag_posts(slug):
     """
     db = get_db()
     cursor = db.cursor()
-    cursor.execute('SELECT * FROM tags WHERE name="%s"' % (slug))
+    cursor.execute('SELECT * FROM tags WHERE name=?' , (slug,))
     tag = cursor.fetchone()
     if not tag:
         abort(404)
 
     cursor.execute('SELECT * FROM posts WHERE status = "publish" AND '\
-            'id IN(SELECT post_id FROM rels WHERE tag_id=%s)'% (tag['id']))
+            'id IN(SELECT post_id FROM rels WHERE tag_id=?)', (tag['id'],))
     posts = cursor.fetchall()
     return render_template('tag-posts.html',posts=posts,tag=tag)
 
@@ -190,9 +190,12 @@ def list_posts():
     sql = 'SELECT * FROM posts';
     keyword = request.args.get('s','')
     if keyword:
-        sql = sql+ ' WHERE title LIKE "%s"' % ('%' + keyword +'%')
+        sql = sql+ ' WHERE title LIKE ?'  
     sql = sql + ' ORDER BY create_at DESC'
-    cursor.execute(sql)
+    if keyword:
+        cursor.execute(sql,("%" + keyword +"%",))
+    else:
+        cursor.execute(sql)
     posts = cursor.fetchall()
     stats = get_stats()
     return render_template('admin/post/list.html',posts=posts,stats=stats,
@@ -219,7 +222,7 @@ def post_delete(id):
     """
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("DELETE FROM posts WHERE id=%s"%(id))
+    cursor.execute("DELETE FROM posts WHERE id=?",(id,))
     db.commit()
     return redirect(url_for('list_posts'))
 
@@ -256,7 +259,7 @@ def post_edit():
         tags = md.Meta.get('tags',[""])[0].strip()
         status = md.Meta.get('status',[""])[0].strip()
         if id:
-            cursor.execute('SELECT * FROM posts WHERE id=%s' % (id))
+            cursor.execute('SELECT * FROM posts WHERE id=?' , (id,))
             post = cursor.fetchone()
 
             if slug != post['slug'] and slug_exists(slug):
@@ -286,7 +289,7 @@ def post_edit():
             return redirect(url_for('post_edit',id=cursor.lastrowid))
     else:
         if id != None:
-            cursor.execute('SELECT * FROM posts WHERE id=%s' % (id))
+            cursor.execute('SELECT * FROM posts WHERE id=?' , (id,))
             post = cursor.fetchone()
         else:
             post = {}
@@ -304,7 +307,7 @@ def slug_exists(slug):
     slug = slug.strip()
     db = get_db()
     cursor = db.cursor()
-    cursor.execute('SELECT * FROM posts WHERE slug="%s"'%(slug))
+    cursor.execute('SELECT * FROM posts WHERE slug=?',(slug,))
     one = cursor.fetchone()
     return one
 
@@ -321,7 +324,7 @@ def save_tags(tags):
     db = get_db()
     for tag in tags:
         cursor = db.cursor()
-        cursor.execute('SELECT * FROM tags WHERE lower(name)=lower("%s")'%(tag))
+        cursor.execute('SELECT * FROM tags WHERE lower(name)=lower(?)',(tag,))
         t = cursor.fetchone()
         if not t:
             cursor.execute('INSERT INTO tags VALUES(null,?,?)',
@@ -341,7 +344,7 @@ def save_rels(tag_ids,post_id):
     db = get_db()
     for id in tag_ids:
         cursor = db.cursor()
-        cursor.execute('DELETE FROM rels WHERE post_id=%s'% (post_id))
+        cursor.execute('DELETE FROM rels WHERE post_id=?', (post_id,))
         cursor.execute('INSERT INTO rels VALUES(NULL,?,?)',(
             id,post_id))
 
