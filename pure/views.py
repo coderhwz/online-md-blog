@@ -2,7 +2,7 @@
 import os,sqlite3,time,datetime,markdown,bcrypt
 from functools import wraps
 from flask import request,session,g,redirect,url_for,abort,\
-        render_template,flash,abort,make_response
+        render_template,flash,abort,make_response,jsonify
 from pure import app
 
 
@@ -257,6 +257,9 @@ def edit_post():
                 save_rels(ids,id)
 
                 db.commit()
+
+            if request.headers['X-Requested-With'] == 'XMLHttpRequest':
+                return jsonify(code=200)
             return redirect(url_for('edit_post',id=id))
 
         else:
