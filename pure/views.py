@@ -258,7 +258,7 @@ def edit_post():
 
                 db.commit()
 
-            if request.headers['X-Requested-With'] == 'XMLHttpRequest':
+            if request.headers.get('X-Requested-With',None) == 'XMLHttpRequest':
                 return jsonify(code=200)
             return redirect(url_for('edit_post',id=id))
 
