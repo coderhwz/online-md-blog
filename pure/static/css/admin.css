@@ -15,6 +15,7 @@ body{
     background-color:#fff;
     border-radius:3px;
     padding:10px 70px;
+    position:relative;
 }
 a{
     text-decoration:none;

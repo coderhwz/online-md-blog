@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block keywords %} {{ post.keyword }} {% endblock %}
+{% block keywords %}{{ post.keyword }} {{ tags | join(',')}}{% endblock %}
 
 {% block desc %} {{ post.desc }} {% endblock %}
 

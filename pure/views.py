@@ -127,7 +127,16 @@ def show_post(slug):
         abort(401)
     if not post:
         abort(404)
-    return render_template('post.html',post=post)
+
+    cursor.execute("SELECT tags.name FROM rels LEFT JOIN tags "\
+            "ON tags.id=rels.tag_id WHERE rels.post_id=?",(post['id'],))
+
+    tags = cursor.fetchall()
+    new_tags=[]
+    for tag in tags:
+        new_tags.append(tag['name'])
+
+    return render_template('post.html',post=post,tags=new_tags)
 
 @app.route('/tag/<slug>')
 def show_tag_posts(slug):
