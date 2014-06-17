@@ -123,23 +123,11 @@ def show_post(slug):
     post = cursor.fetchone()
     if not post:
         abort(404);
-    if post.get('status') != 'publish' and not session.get('login',None):
+    if post['status'] != 'publish' and not session.get('login',None):
         abort(401)
     if not post:
         abort(404)
     return render_template('post.html',post=post)
-
-# @app.route('/tags')
-# def list_tags():
-    # """@todo: 标签页.
-    # :returns: @todo
-
-    # """
-    # db = get_db()
-    # cursor = db.cursor()
-    # cursor.execute('SELECT * FROM tags')
-    # tags = cursor.fetchall()
-    # return render_template('tags.html',tags=tags)
 
 @app.route('/tag/<slug>')
 def show_tag_posts(slug):
