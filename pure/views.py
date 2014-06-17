@@ -241,7 +241,7 @@ def edit_post():
             'admonition','meta'])
         content = md.convert(mdtext)
         title = md.Meta.get('title',[""])[0].strip()
-        keyword = md.Meta.get('keywords',[""])[0].strip()
+        keyword = md.Meta.get('keyword',[""])[0].strip()
         slug = md.Meta.get('slug',[""])[0].strip()
 
         desc = md.Meta.get('description',[""])[0].strip()
