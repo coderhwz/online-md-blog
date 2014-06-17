@@ -36,18 +36,24 @@ p {
 article h2{
     font-size:16px;
 }
-article pre{
-    line-height:16px;
-}
-article code{
+code{
+    border:1px solid #ccc;
+    border-radius:3px;
+    padding:0 3px;
     font-size:12px;
-    background:#f8f8f8;
+    background-color:#f9f2f4;
+    color:#c7254e;
 }
+
 article img{
     width:100%;
 }
 .codehilite pre {
+    line-height:16px;
     overflow:auto;
+    border:1px solid #ccc;
+    border-radius:5px;
+    padding:9.5px;
 }
 .list{
     font-size:14px;

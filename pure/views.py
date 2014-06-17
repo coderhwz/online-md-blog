@@ -341,11 +341,12 @@ def save_rels(tag_ids,post_id):
     if not tag_ids:
         return 
     db = get_db()
+    cursor = db.cursor()
+    cursor.execute('DELETE FROM rels WHERE post_id=?', (post_id,))
+    data = []
     for id in tag_ids:
-        cursor = db.cursor()
-        cursor.execute('DELETE FROM rels WHERE post_id=?', (post_id,))
-        cursor.execute('INSERT INTO rels VALUES(NULL,?,?)',(
-            id,post_id))
+        data.append((id,post_id))
+    cursor.executemany('INSERT INTO rels VALUES(NULL,?,?)',(data))
 
 
 
