@@ -5,7 +5,7 @@
     <h1 class="title">Tags</h1>
     <ul class="list tags">
         {% for tag in tags %}
-        <li><a href="{{ url_for('show_tag_posts',slug=tag.name) }}" alt="{{ tag.name }}">{{ tag.name }}</a>
+        <li><a href="{{ url_for('show_tag_posts',slug=tag.name) }}" alt="{{ tag.name }}">{{ tag.name }}({{ tag.cnt }})</a>
         <span class="time"> {{ tag.create_at | timefmt }}</li> </span>
         {% endfor%}
     </ul>

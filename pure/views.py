@@ -127,17 +127,17 @@ def show_post(slug):
         abort(404)
     return render_template('post.html',post=post)
 
-@app.route('/tags')
-def list_tags():
-    """@todo: 标签页.
-    :returns: @todo
+# @app.route('/tags')
+# def list_tags():
+    # """@todo: 标签页.
+    # :returns: @todo
 
-    """
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute('SELECT * FROM tags')
-    tags = cursor.fetchall()
-    return render_template('tags.html',tags=tags)
+    # """
+    # db = get_db()
+    # cursor = db.cursor()
+    # cursor.execute('SELECT * FROM tags')
+    # tags = cursor.fetchall()
+    # return render_template('tags.html',tags=tags)
 
 @app.route('/tag/<slug>')
 def show_tag_posts(slug):
@@ -192,6 +192,14 @@ def admin_list_tags():
     tags = cursor.fetchall()
     return render_template('admin/tags.html',tags=tags)
 
+@app.route('/tags')
+def list_tags():
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('SELECT tags.create_at,tags.name AS name,COUNT(rels.post_id) AS cnt FROM rels '
+            'LEFT JOIN tags ON tags.id=rels.tag_id GROUP BY tags.id')
+    tags = cursor.fetchall()
+    return render_template('tags.html',tags=tags)
 
 @app.route('/admin/post/delete/<int:id>')
 @requires_auth
@@ -205,6 +213,7 @@ def delete_post(id):
     db = get_db()
     cursor = db.cursor()
     cursor.execute("DELETE FROM posts WHERE id=?",(id,))
+    cursor.execute("DELETE FROM rels WHERE post_id=?",(id,))
     db.commit()
     return redirect(url_for('list_posts'))
 
