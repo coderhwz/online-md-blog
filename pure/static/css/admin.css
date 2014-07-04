@@ -98,3 +98,8 @@ h1{
     float:right;
     padding-right:10px;
 }
+.status{
+    border:1px solid #ccc;
+    border-radius:3px;
+    color:red;
+}
