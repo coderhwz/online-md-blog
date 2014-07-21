@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 
+{% block title %} {{ post.title }} | coderhwz's blog {% endblock %}
+
 {% block keywords %}{{ post.keyword + ',' if post.keyword else '' }} {{ tags | join(',')}}{% endblock %}
 
 {% block desc %} {{ post.desc }} {% endblock %}
