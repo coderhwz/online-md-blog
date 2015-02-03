@@ -21,6 +21,7 @@
 
             var editor = CodeMirror.fromTextArea(document.getElementById('editor'),{
                 viewportMargin:Infinity,
+                lineWrapping:true
             });
             var id = $('input[name=id]');
             if (id.val() > 0) {
